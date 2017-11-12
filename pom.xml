@@ -17,6 +17,13 @@
 			<url>https://raw.githubusercontent.com/cyberpwnn/Central/master/</url>
 		</repository>
 	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.cyberpwn</groupId>
+			<artifactId>GConcurrent</artifactId>
+			<version>1.1</version>
+		</dependency>
+	</dependencies>
 	<distributionManagement>
 		<repository>
 			<id>central</id>
