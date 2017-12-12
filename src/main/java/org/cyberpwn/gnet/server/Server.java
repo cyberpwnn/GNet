@@ -11,7 +11,7 @@ import org.cyberpwn.gnet.packet.PacketHandler;
 import org.cyberpwn.gnet.streams.ISS;
 import org.cyberpwn.gnet.streams.OSS;
 
-public class Server extends Thread implements IServer
+public abstract class Server extends Thread implements IServer
 {
 	private int port;
 	private ServerSocket socket;
@@ -23,6 +23,7 @@ public class Server extends Thread implements IServer
 		this.port = port;
 	}
 
+	@Override
 	public PacketHandler getHandler()
 	{
 		return handler;
@@ -96,8 +97,5 @@ public class Server extends Thread implements IServer
 	}
 
 	@Override
-	public IPacket onPacketReceived(IPacket p)
-	{
-		return null;
-	}
+	public abstract IPacket onPacketReceived(IPacket p);
 }
