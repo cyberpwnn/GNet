@@ -1,4 +1,4 @@
-package org.cyberpwn.gnet;
+package org.cyberpwn.gnet.download;
 
 import java.io.BufferedInputStream;
 import java.io.File;

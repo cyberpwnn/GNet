@@ -1,4 +1,4 @@
-package org.cyberpwn.gnet;
+package org.cyberpwn.gnet.download;
 
 public interface DownloadMonitor
 {
