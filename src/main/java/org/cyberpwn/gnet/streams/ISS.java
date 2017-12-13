@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import javax.crypto.Cipher;
 
+import org.cyberpwn.glang.GList;
 import org.cyberpwn.gnet.streams.writable.Streamable;
 
 /**
@@ -58,6 +59,34 @@ public class ISS extends InputStream
 		return this;
 	}
 
+	public final GList<String> readStringList() throws IOException
+	{
+		int f = readInt();
+		GList<String> st = new GList<String>();
+
+		for(int i = 0; i < f; i++)
+		{
+			st.add(readString());
+		}
+
+		return st;
+	}
+
+	public final GList<Streamable> readStreamableList(Streamable type) throws Exception
+	{
+		int f = readInt();
+		GList<Streamable> st = new GList<Streamable>();
+
+		for(int i = 0; i < f; i++)
+		{
+			Streamable newf = type.getClass().getConstructor().newInstance();
+			read(newf);
+			st.add(newf);
+		}
+
+		return st;
+	}
+
 	/**
 	 * Create a cipherInputStream on top of the parent stream
 	 *
@@ -95,7 +124,8 @@ public class ISS extends InputStream
 	public int read() throws IOException
 	{
 		build();
-		return in.read();
+		int m = in.read();
+		return m;
 	}
 
 	/**
@@ -107,7 +137,7 @@ public class ISS extends InputStream
 	 */
 	public final boolean readBoolean() throws IOException
 	{
-		int ch = in.read();
+		int ch = read();
 
 		if(ch < 0)
 		{
@@ -126,7 +156,7 @@ public class ISS extends InputStream
 	 */
 	public final byte readByte() throws IOException
 	{
-		int ch = in.read();
+		int ch = read();
 
 		if(ch < 0)
 		{
@@ -145,8 +175,8 @@ public class ISS extends InputStream
 	 */
 	public final short readShort() throws IOException
 	{
-		int ch1 = in.read();
-		int ch2 = in.read();
+		int ch1 = read();
+		int ch2 = read();
 
 		if((ch1 | ch2) < 0)
 		{
@@ -165,8 +195,8 @@ public class ISS extends InputStream
 	 */
 	public final char readChar() throws IOException
 	{
-		int ch1 = in.read();
-		int ch2 = in.read();
+		int ch1 = read();
+		int ch2 = read();
 
 		if((ch1 | ch2) < 0)
 		{
@@ -185,10 +215,10 @@ public class ISS extends InputStream
 	 */
 	public final int readInt() throws IOException
 	{
-		int ch1 = in.read();
-		int ch2 = in.read();
-		int ch3 = in.read();
-		int ch4 = in.read();
+		int ch1 = read();
+		int ch2 = read();
+		int ch3 = read();
+		int ch4 = read();
 
 		if((ch1 | ch2 | ch3 | ch4) < 0)
 		{
@@ -236,7 +266,7 @@ public class ISS extends InputStream
 
 		while(n < len)
 		{
-			int count = in.read(b, off + n, len - n);
+			int count = read(b, off + n, len - n);
 			if(count < 0)
 			{
 				throw new EOFException();
@@ -244,6 +274,64 @@ public class ISS extends InputStream
 
 			n += count;
 		}
+	}
+
+	@Override
+	public int read(byte b[]) throws IOException
+	{
+		return read(b, 0, b.length);
+	}
+
+	@Override
+	public int read(byte b[], int off, int len) throws IOException
+	{
+		if(b == null)
+		{
+			throw new NullPointerException();
+		}
+
+		else if(off < 0 || len < 0 || len > b.length - off)
+		{
+			throw new IndexOutOfBoundsException();
+		}
+
+		else if(len == 0)
+		{
+			return 0;
+		}
+
+		int c = read();
+
+		if(c == -1)
+		{
+			return -1;
+		}
+
+		b[off] = (byte) c;
+
+		int i = 1;
+
+		try
+		{
+			for(; i < len; i++)
+			{
+				c = read();
+
+				if(c == -1)
+				{
+					break;
+				}
+
+				b[off + i] = (byte) c;
+			}
+		}
+
+		catch(IOException ee)
+		{
+
+		}
+
+		return i;
 	}
 
 	/**
@@ -308,10 +396,9 @@ public class ISS extends InputStream
 	 *
 	 * @param s
 	 *            the streamable object
-	 * @throws IOException
-	 *             shit happens
+	 * @throws Exception
 	 */
-	public final void read(Streamable s) throws IOException
+	public final void read(Streamable s) throws Exception
 	{
 		s.fromBytes(this);
 	}

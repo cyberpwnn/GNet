@@ -48,10 +48,15 @@ public abstract class Server extends Thread implements IServer
 			try
 			{
 				Socket client = socket.accept();
-				OSS out = new OSS(client.getOutputStream()).gzip(1);
-				ISS in = new ISS(client.getInputStream()).gzip();
+				System.out.println("Connection Received");
+				OSS out = new OSS(client.getOutputStream());
+				ISS in = new ISS(client.getInputStream());
 				handler.redirect(out, in);
-				handler.write(onPacketReceived(handler.read()));
+				IPacket from = handler.read();
+				System.out.println("<- " + from.getPacketName());
+				IPacket to = onPacketReceived(from);
+				handler.write(to);
+				System.out.println("-> " + to.getPacketName());
 				out.flush();
 				client.close();
 			}
@@ -61,7 +66,7 @@ public abstract class Server extends Thread implements IServer
 				continue;
 			}
 
-			catch(IOException e)
+			catch(Exception e)
 			{
 				e.printStackTrace();
 			}

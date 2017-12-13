@@ -11,7 +11,7 @@ public interface IClient
 
 	public String getAddress();
 
-	public IPacket sendPacket(IPacket send) throws IOException;
+	public IPacket sendPacket(IPacket send) throws IOException, Exception;
 
 	public PacketHandler getHandler();
 }

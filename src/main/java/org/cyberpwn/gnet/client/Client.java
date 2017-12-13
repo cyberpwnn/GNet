@@ -29,7 +29,7 @@ public class Client implements IClient
 		socket = new Socket();
 		socket.setTrafficClass(0x10);
 		socket.setTcpNoDelay(true);
-		socket.setSoTimeout(1000);
+		socket.setSoTimeout(10000);
 		socket.setPerformancePreferences(1, 2, 0);
 		socket.connect(new InetSocketAddress(address, port), 1000);
 	}
@@ -52,15 +52,17 @@ public class Client implements IClient
 	}
 
 	@Override
-	public IPacket sendPacket(IPacket send) throws IOException
+	public IPacket sendPacket(IPacket send) throws Exception
 	{
 		connect();
-		ISS in = new ISS(socket.getInputStream()).gzip();
-		OSS out = new OSS(socket.getOutputStream()).gzip(1);
+		System.out.println("-> " + send.getPacketName());
+		ISS in = new ISS(socket.getInputStream());
+		OSS out = new OSS(socket.getOutputStream());
 		handler.redirect(out, in);
 		handler.write(send);
 		out.flush();
 		IPacket response = handler.read();
+		System.out.println("<- " + response.getPacketName());
 		disconnect();
 
 		return response;

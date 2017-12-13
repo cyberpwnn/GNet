@@ -7,6 +7,7 @@ import java.io.OutputStream;
 
 import javax.crypto.Cipher;
 
+import org.cyberpwn.glang.GList;
 import org.cyberpwn.gnet.streams.writable.Streamable;
 
 public class OSS extends OutputStream
@@ -16,10 +17,10 @@ public class OSS extends OutputStream
 	private final StreamBuilder bu;
 	private boolean built;
 
-	public OSS(OutputStream in)
+	public OSS(OutputStream out)
 	{
-		this.out = in;
-		this.gen = in;
+		this.out = out;
+		this.gen = out;
 		this.bu = new StreamBuilder();
 		this.built = false;
 	}
@@ -58,32 +59,52 @@ public class OSS extends OutputStream
 
 	public final void writeBoolean(boolean v) throws IOException
 	{
-		out.write(v ? 1 : 0);
+		write(v ? 1 : 0);
 	}
 
 	public final void writeByte(int v) throws IOException
 	{
-		out.write(v);
+		write(v);
 	}
 
 	public final void writeShort(int v) throws IOException
 	{
-		out.write((v >>> 8) & 0xFF);
-		out.write((v >>> 0) & 0xFF);
+		write((v >>> 8) & 0xFF);
+		write((v >>> 0) & 0xFF);
 	}
 
 	public final void writeChar(int v) throws IOException
 	{
-		out.write((v >>> 8) & 0xFF);
-		out.write((v >>> 0) & 0xFF);
+		write((v >>> 8) & 0xFF);
+		write((v >>> 0) & 0xFF);
 	}
 
 	public final void writeInt(int v) throws IOException
 	{
-		out.write((v >>> 24) & 0xFF);
-		out.write((v >>> 16) & 0xFF);
-		out.write((v >>> 8) & 0xFF);
-		out.write((v >>> 0) & 0xFF);
+		write((v >>> 24) & 0xFF);
+		write((v >>> 16) & 0xFF);
+		write((v >>> 8) & 0xFF);
+		write((v >>> 0) & 0xFF);
+	}
+
+	public final void writeStringList(GList<String> s) throws IOException
+	{
+		writeInt(s.size());
+
+		for(String i : s)
+		{
+			writeString(i);
+		}
+	}
+
+	public final void writeStreamableList(GList<Streamable> s) throws Exception
+	{
+		writeInt(s.size());
+
+		for(Streamable i : s)
+		{
+			write(i);
+		}
 	}
 
 	private byte writeBuffer[] = new byte[8];
@@ -97,7 +118,7 @@ public class OSS extends OutputStream
 		writeBuffer[5] = (byte) (v >>> 16);
 		writeBuffer[6] = (byte) (v >>> 8);
 		writeBuffer[7] = (byte) (v >>> 0);
-		out.write(writeBuffer, 0, 8);
+		write(writeBuffer, 0, 8);
 	}
 
 	public final void writeFloat(float v) throws IOException
@@ -123,6 +144,11 @@ public class OSS extends OutputStream
 		}
 	}
 
+	public void db()
+	{
+
+	}
+
 	@Override
 	public void write(int b) throws IOException
 	{
@@ -135,14 +161,13 @@ public class OSS extends OutputStream
 	 *
 	 * @param s
 	 *            the object
-	 * @throws IOException
-	 *             shit happens
+	 * @throws Exception
 	 */
-	public void write(Streamable s) throws IOException
+	public void write(Streamable s) throws Exception
 	{
-		OSS out = new OSS();
-		s.toBytes(out);
-		write(out.getBytes());
+		OSS dout = new OSS();
+		s.toBytes(dout);
+		write(dout.getBytes());
 	}
 
 	public final byte[] getBytes() throws IOException
@@ -160,5 +185,11 @@ public class OSS extends OutputStream
 	public void close() throws IOException
 	{
 		out.close();
+	}
+
+	@Override
+	public void flush() throws IOException
+	{
+		out.flush();
 	}
 }

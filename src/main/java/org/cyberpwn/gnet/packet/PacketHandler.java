@@ -1,7 +1,5 @@
 package org.cyberpwn.gnet.packet;
 
-import java.io.IOException;
-
 import org.cyberpwn.glang.GList;
 import org.cyberpwn.gnet.streams.ISS;
 import org.cyberpwn.gnet.streams.OSS;
@@ -48,12 +46,12 @@ public class PacketHandler
 		return null;
 	}
 
-	public IPacket read() throws IOException
+	public IPacket read() throws Exception
 	{
 		int id = in.readInt();
 		int length = in.readInt();
 		byte[] pdata = new byte[length];
-		in.read(pdata);
+		in.readFully(pdata);
 		IPacket packet = findPacket(id);
 		ISS inv = new ISS(pdata);
 
@@ -68,7 +66,7 @@ public class PacketHandler
 		return packet;
 	}
 
-	public void write(IPacket packet) throws IOException
+	public void write(IPacket packet) throws Exception
 	{
 		OSS buf = new OSS();
 		packet.toBytes(buf);
