@@ -97,6 +97,26 @@ public class OSS extends OutputStream
 		}
 	}
 
+	public final void writeDoubleList(GList<Double> s) throws IOException
+	{
+		writeInt(s.size());
+
+		for(Double i : s)
+		{
+			writeDouble(i);
+		}
+	}
+
+	public final void writeLongList(GList<Long> s) throws IOException
+	{
+		writeInt(s.size());
+
+		for(Long i : s)
+		{
+			writeLong(i);
+		}
+	}
+
 	public final void writeStreamableList(GList<Streamable> s) throws Exception
 	{
 		writeInt(s.size());

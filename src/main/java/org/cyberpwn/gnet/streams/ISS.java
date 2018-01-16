@@ -72,6 +72,32 @@ public class ISS extends InputStream
 		return st;
 	}
 
+	public final GList<Double> readDoubleList() throws IOException
+	{
+		int f = readInt();
+		GList<Double> st = new GList<Double>();
+
+		for(int i = 0; i < f; i++)
+		{
+			st.add(readDouble());
+		}
+
+		return st;
+	}
+
+	public final GList<Long> readLongList() throws IOException
+	{
+		int f = readInt();
+		GList<Long> st = new GList<Long>();
+
+		for(int i = 0; i < f; i++)
+		{
+			st.add(readLong());
+		}
+
+		return st;
+	}
+
 	public final GList<Streamable> readStreamableList(Streamable type) throws Exception
 	{
 		int f = readInt();
