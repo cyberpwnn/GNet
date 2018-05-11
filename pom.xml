@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.cyberpwn</groupId>
 	<artifactId>GNet</artifactId>
-	<version>1.2.6</version>
+	<version>1.2.7</version>
 	<name>GNet</name>
 	<description>Networking stuff </description>
 	<properties>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.cyberpwn</groupId>
 			<artifactId>GConcurrent</artifactId>
-			<version>1.1</version>
+			<version>1.5.3</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
